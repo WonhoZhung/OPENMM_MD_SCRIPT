@@ -67,13 +67,14 @@ def prepare_system(ligand_fn, protein_fn, complex_fn=None, solvate=False, verbos
                 md_params.FRICTION_COEFF,
                 md_params.STEP_SIZE
     )
-    system.addForce(
-                openmm.MonteCarloBarostat(
-                        md_params.PRESSURE, 
-                        md_params.TEMPERATURE, 
-                        25
-                )
-    )
+    if solvate:
+        system.addForce(
+                    openmm.MonteCarloBarostat(
+                            md_params.PRESSURE, 
+                            md_params.TEMPERATURE, 
+                            25
+                    )
+        )
     if verbose: 
         print(f"System generation ends! --- Duration: {time() - st:.2f}(s)")
     return modeller, system, integrator
