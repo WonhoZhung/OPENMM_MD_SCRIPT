@@ -17,21 +17,26 @@ args = parser.parse_args()
 t = md.load(
     args.t,
     top=args.c
-)
+) # trajectory
+r = md.load(
+    args.c
+) # reference
 
-atoms = t.topology.select("chainid 1")
-rmsds_lig = md.rmsd(t, t, frame=0, atom_indices=atoms, parallel=True, precentered=False)
-#atoms = t.topology.select("chainid 0 and backbone")
+lig_atoms = t.topology.select("chainid 1")
+bck_atoms = t.topology.select("chainid 0 and backbone")
+t.superpose(r, atom_indices=bck_atoms)
+#rmsds_lig = md.rmsd(t, t, frame=0, atom_indices=lig_atoms, parallel=True, precentered=False)
+rmsds_lig = np.sqrt(3*np.mean((t.xyz[:, lig_atoms, :] - t.xyz[0:1, lig_atoms, :])**2, axis=(1,2)))
 #rmsds_bck = md.rmsd(t, t, frame=0, atom_indices=atoms, parallel=True, precentered=False)
 
 #df = pd.DataFrame({"time": t.time, "lig": np.array(rmsds_lig), "bck": np.array(rmsds_bck)})
-df = pd.DataFrame({"time": t.time * 10, "lig": np.array(rmsds_lig)})
+df = pd.DataFrame({"time": t.time, "lig": np.array(rmsds_lig)})
 
 sns.set_theme(style="darkgrid")
 sns.lineplot(data=df, x="time", y="lig", label="Ligand")
 #sns.lineplot(data=df, x="time", y="bck", label="Backbone")
 
-plt.xlabel('Time (ps)')
+plt.xlabel('Time steps')
 plt.ylabel('RMSD (Å)')
 
 plt.show()

@@ -39,10 +39,10 @@ def prepare_system(ligand_fn, protein_fn, complex_fn=None, solvate=False, verbos
     st = time()
     system_generator = SystemGenerator(
                 forcefields=md_params.FORCEFIELDS,
-                forcefield_kwargs=md_params.FORCEFIELD_KWARGS
+                small_molecule_forcefield=md_params.SMALL_MOLECULE_FORCEFIELD,
+                forcefield_kwargs=md_params.FORCEFIELD_KWARGS,
+                molecules=[ligand_mol]
     )
-    small_molecule_forcefield = GAFFTemplateGenerator(molecules=ligand_mol)
-    system_generator.forcefield.registerTemplateGenerator(small_molecule_forcefield.generator)
 
     if solvate:
         modeller.addSolvent(
@@ -109,6 +109,8 @@ def run_simulation(modeller, system, integrator, platform, traj_fn, log_fn, verb
     if verbose: 
         print("MD simulation starts!")
     st = time()
+    #simulation.reporters.append(PDBReporter(traj_fn, \
+    #        md_params.REPORTING_INTERVAL, enforcePeriodicBox=False))
     simulation.reporters.append(DCDReporter(traj_fn, \
             md_params.REPORTING_INTERVAL, enforcePeriodicBox=False))
     simulation.reporters.append(StateDataReporter(log_fn, \

@@ -1,12 +1,11 @@
-from simtk import unit
-from openmm import app
+from openmm import unit, app
 
 
 PH = 7.4
 TEMPERATURE = 303.15 * unit.kelvin
 PRESSURE = 1.0 * unit.atmosphere
-IONIC_STRENGTH = 0.1 * unit.molar
-POSITIVE_ION = "K+"
+IONIC_STRENGTH = 0.0 * unit.molar
+POSITIVE_ION = "Na+"
 NEGATIVE_ION = "Cl-"
 PADDING = 10.0 * unit.angstrom
 FRICTION_COEFF = 1 / unit.picosecond
